@@ -1,0 +1,3 @@
+[2025-11-06T09:49:19.596389+00:00] task_tracker.INFO: LOGIN_SUCCESS {"user_id":"1","email":"log@email.com"} {"url":"/login.php","ip":"::1","http_method":"POST","server":"localhost","referrer":"http://localhost:8000/login.php?registered=true"}
+[2025-11-06T10:03:36.881812+00:00] task_tracker.INFO: LOGIN_SUCCESS {"user_id":"1","email":"log@email.com"} {"url":"/login.php","ip":"::1","http_method":"POST","server":"localhost","referrer":"http://localhost:8000/login.php"}
+[2025-11-06T10:04:03.318817+00:00] task_tracker.INFO: CREATE_TASK {"user_id":"1","task_id":"1","task":"Test logger"} {"url":"/index.php","ip":"::1","http_method":"POST","server":"localhost","referrer":"http://localhost:8000/index.php"}

@@ -1,0 +1,20 @@
+{
+    "name": "se7enseads/task-tracker",
+    "description": "Hard-Boiled TaskTracker",
+    "type": "project",
+    "require": {
+        "monolog/monolog": "^3.9"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Se7enseads\\TaskTracker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tiramisu",
+            "email": "135003824+Se7enseads@users.noreply.github.com"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 <?php
 require_once "db.php";
 require_once "func/passwd.php";
+require_once "func/logger.php";
 
 global $db;
 
@@ -37,6 +38,8 @@ global $db;
  *     and a link to the registration page.
  */
 
+ $log = get_logger();
+
 $error = "";
 
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -53,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["login"])) {
         !hash_equals($_SESSION["csrf_token"], $_POST["csrf_token"])
     ) {
         $error = "Invalid CSRF token. Please try again.";
+        $log->warning('CSRF_VALIDATION_FAIL', ['email' => $_POST["email"]]);
     } elseif (empty($_POST["email"]) || empty($_POST["password"])) {
         $error = "Email and password are required.";
     } else {
@@ -101,6 +105,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["login"])) {
                     session_regenerate_id(true);
                     $_SESSION["user_id"] = $user["id"];
 
+                    $log->info('LOGIN_SUCCESS', ['user_id' => $user['id'], 'email' => $email]);
+
                     // Redirect to the main page.
                     header("Location: index.php");
                     exit();
@@ -112,11 +118,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["login"])) {
                     $stmt->bindParam(":id", $user["id"]);
                     $stmt->execute();
                     sleep(2);
+                    $log->notice('LOGIN_FAIL_PASSWORD', ['user_id' => $user['id'], 'email' => $email]);
+
                     $error = "Invalid email or password.";
                 }
             }
         } else {
             sleep(2);
+            $log->notice('LOGIN_FAIL_NO_USER', ['email' => $email]);
             $error = "Invalid email or password.";
         }
     }

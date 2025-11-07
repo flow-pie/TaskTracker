@@ -36,6 +36,16 @@ try {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS audit_log (
+           id INTEGER PRIMARY KEY AUTOINCREMENT,
+           timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+           user_id INTEGER,
+           user_email TEXT,
+           event_type TEXT NOT NULL,
+           ip_address TEXT,
+           details TEXT
+       )");
 } catch (PDOException $e) {
     log_event("Database Connection Error: " . $e->getMessage(), "error");
     die("Database connection failed. Please try again later.");

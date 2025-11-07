@@ -14,6 +14,7 @@
  * - Rendering the HTML structure for the task list and management forms.
  */
 require_once "db.php";
+require_once "func/logger.php";
 global $db;
 
 // Security Headers
@@ -38,6 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         !hash_equals($_SESSION["csrf_token"], $_POST["csrf_token"])
     ) {
         $error = "Invalid CSRF token. Action blocked.";
+        $log = get_logger(true);
+        $log->warning('CSRF_VALIDATION_FAIL', ['user_id' => $userId]);
     } else {
         if (isset($_POST["add_task"])) {
             if (empty($_POST["task"])) {
@@ -50,6 +53,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt->bindParam(":user_id", $userId);
                 $stmt->bindParam(":task", $task);
                 $stmt->execute();
+
+                $newTaskId = $db->lastInsertId(); 
+                $log = get_logger(false);
+                $log->info('CREATE_TASK', [
+                    'user_id' => $userId,
+                    'task_id' => $newTaskId,
+                    'task'    => $task
+                ]);
+                
                 header("Location: index.php");
                 exit();
             }
@@ -66,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt->bindParam(":id", $taskId);
                 $stmt->bindParam(":user_id", $userId);
                 $stmt->execute();
+                log_event("Task added for user ID $userId", "info");
                 header("Location: index.php");
                 exit();
             }
@@ -79,6 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->bindParam(":id", $taskId);
             $stmt->bindParam(":user_id", $userId);
             $stmt->execute();
+            log_event("Task added for user ID $userId", "info");
             header("Location: index.php");
             exit();
         }
